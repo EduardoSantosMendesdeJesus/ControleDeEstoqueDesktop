@@ -1,0 +1,33 @@
+Biblioteca
+
+using System.Runtime.InteropServices;
+
+***************************************************************************
+Não copiar este codigo é apenas indicação de onde o comando
+os comandos da biblioteca tem que ficar.
+
+	/*
+ 	public frmCadastroCategoria()
+        {
+            InitializeComponent();
+        }
+	*/
+
+*******************************************************************************
+Comandos da biblioteca 
+
+
+	[DllImport("user32.Dll", EntryPoint = "ReleaseCapture")]
+	private extern static void ReleaseCapture();
+
+	[DllImport("user32.Dll", EntryPoint = "SendMessage")]
+	private extern static void SendMessage(System.IntPtr hwnd, int wmsg, int wparam, int lparam);
+
+*******************************************************************************
+copiar só os parametros do evento MouseDown
+
+	  //private void lbCadastroCategoria_MouseDown(object sender, MouseEventArgs e)
+        	{
+            		ReleaseCapture();
+            		SendMessage(this.Handle, 0x112, 0xf012, 0);
+        	}

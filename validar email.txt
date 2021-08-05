@@ -1,0 +1,65 @@
+------------------------------------------------------------------
+-- Como validar o formato de e-mails no SQL
+------------------------------------------------------------------
+--------------------------------------------------
+-- Requisitos para nosso teste
+--------------------------------------------------
+-- Banco de testes
+use master
+if db_id('curso') is not null
+    drop database curso
+go
+create database curso
+go
+use curso
+go
+ 
+--------------------------------------------------
+-- Validando e-mails via check
+--------------------------------------------------
+-- Tabela de testes
+if object_id('amigos') is not null drop table amigos
+create table amigos (
+    nr int,
+    nome varchar(100),
+    email varchar(200),
+    constraint ck_amigos_email01 check (email like '[a-z,0-9,_,-]%@[a-z,0-9,_,-]%.[a-z]%'), -- exige formato: [letras-numeros-underline-traço] + [qualquer coisa] + [@] + [letras-numeros-underline-traço] + [qualquer coisa] + [.] + [letras] + qualquer coisa
+    constraint ck_amigos_email02 check (email not like '%[^a-z0-9@._-]%'), -- impede caracteres que não sejam: a-z 0-9 @ . _ -
+    constraint ck_amigos_email03 check (email not like '%@%@%'), -- impede dois arrobas
+    constraint ck_amigos_email04 check (email not like '%.@%'), -- impede .@
+    constraint ck_amigos_email05 check (email not like '%..%'), -- impede ..
+    constraint ck_amigos_email06 check (email not like '%.') -- impede terminar com .
+)
+ 
+ 
+-- ERRO: Formatos inválidos
+insert into amigos values (1, 'josue', '@teste.com') -- começando com @
+insert into amigos values (1, 'josue', 'josue@teste') -- sem sufixo de domínio
+insert into amigos values (1, 'josue', 'jo ue@teste') -- espaço
+insert into amigos values (1, 'josue', 'jo"ue@teste') -- aspas
+insert into amigos values (1, 'josue', 'jo$ue@teste') -- caracteres especiais
+insert into amigos values (1, 'josue', 'josue^teste@teste.com') -- caracteres especiais
+insert into amigos values (1, 'josue', 'josue]teste@teste.com') -- caracteres especiais
+insert into amigos values (1, 'josue', 'josue%teste@teste.com') -- caracteres especiais
+insert into amigos values (1, 'josue', 'josue@.teste.com') -- @. juntos
+insert into amigos values (1, 'josue', 'josue@@teste.com') -- 2 arrobas juntos
+insert into amigos values (1, 'josue', 'josue@teste@teste.com') -- 2 arrobas separados
+insert into amigos values (1, 'josue', 'josue.@teste.com') -- .@ juntos
+insert into amigos values (1, 'josue', 'josue@teste..com') -- .. juntos
+insert into amigos values (1, 'josue', 'josue@teste.ad.') -- . no final
+ 
+ 
+-- OK: Formatos válidos
+insert into amigos values (1, 'josue', 'josue@teste.com.br')
+insert into amigos values (1, 'josue', 'josue@teste.com')
+insert into amigos values (1, 'josue', 'josue.teste@teste.com')
+insert into amigos values (1, 'josue', 'josue_teste@teste.com')
+insert into amigos values (1, 'josue', 'josue-teste@teste.com')
+insert into amigos values (1, 'josue', 'josue@dba-pro.com')
+insert into amigos values (1, 'josue', 'josue2017@teste.com')
+insert into amigos values (1, 'josue', '2017@2017.com')
+ 
+ 
+-- Excluindo dados de teste
+use master
+drop database curso

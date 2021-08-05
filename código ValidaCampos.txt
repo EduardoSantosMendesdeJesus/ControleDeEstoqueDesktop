@@ -1,0 +1,59 @@
+private void ValidaCampos()
+{
+	if(rbfisica.Checked == true)
+		{
+			txtCPFCNPJ.Mask = "000.000.000-00";
+			txtRGIE.Mask = "00.000.000-0";
+		}
+	else
+		{
+			txtCPFCNPJ.Mask = "00.000.000/0000-00";
+			txtRGIE.Mask = "00000000-0";
+		}
+}
+
+
+
+ private void txtCPFCNPJ_Leave_1(object sender, EventArgs e)
+        {
+            lbValorIncorreto.Visible = false;
+            if (rbFisica.Checked == true)
+            {
+                //cpf
+                if (Validacao.IsCpf(txtCPFCNPJ.Text) == false)
+                {
+                    lbValorIncorreto.Visible = true;
+                }
+            }
+            else
+            {
+                //cnpj
+                if (Validacao.IsCnpj(txtCPFCNPJ.Text) == false)
+                {
+                    lbValorIncorreto.Visible = true;
+                }
+            }
+        }
+
+
+        private void rbFisica_CheckedChanged(object sender, EventArgs e)
+        {
+            if(rbFisica.Checked == true)
+            {
+                lbRSocial.Visible = false;
+                txtRSocial.Visible = false;
+                lbCPFCNPJ.Text = "CPF";
+                lbRGIE.Text = "RG";
+                txtCPFCNPJ.Mask = "000.000.000-00";
+                txtRGIE.Mask = "00.000.000-0";
+            }
+            else
+            {
+                lbRSocial.Visible = true;
+                txtRSocial.Visible = true;
+                lbCPFCNPJ.Text = "CNPJ";
+                lbRGIE.Text = "INSCRIÇÃO ESTADUAL (IE)";
+                txtCPFCNPJ.Mask = "00.000.000/0000-00";
+                txtRGIE.Mask = "00000000-0";
+            }
+        }
